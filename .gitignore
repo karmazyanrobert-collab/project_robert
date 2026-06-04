@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.streamlit/
+.env
+.venv/
+venv/
+data/bronze/*.parquet
+data/silver/*.parquet
+data/gold/*.parquet
+data/*.duckdb
+data/*.duckdb.wal
