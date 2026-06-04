@@ -143,3 +143,14 @@ Dashboard показывает:
 | Cube.js | Python semantic layer `src/semantic_layer.py` |
 | Lakehouse | Bronze/Silver/Gold Parquet + DuckDB |
 | Great Expectations | собственный Data Quality framework |
+
+## 14. Проверка перед защитой
+
+Перед финальной демонстрацией полезно выполнить минимальные проверки:
+
+```bash
+python -m py_compile dashboard/app.py src/*.py tests/test_pipeline.py
+python -m pytest tests -v
+```
+
+В тестах также проверяется, что в ранее конфликтующих файлах нет стандартных merge-маркеров Git, поэтому репозиторий готов к открытию PR и деплою в Streamlit Cloud.

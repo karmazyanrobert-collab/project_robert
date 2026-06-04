@@ -122,10 +122,10 @@ def get_streaming_metrics(filters: dict[str, Any] | None = None) -> dict[str, pd
     events = query_df(f"SELECT * FROM streaming_events {where} ORDER BY event_ts DESC LIMIT 20", params)
     summary = query_df(
         f"""
-        SELECT COUNT(*) / GREATEST(DATE_DIFF('minute', MIN(event_ts), MAX(event_ts)), 1) AS events_per_minute,
-               COUNT(DISTINCT student_id) FILTER (WHERE event_ts >= NOW() - INTERVAL 5 MINUTE) AS active_students_last_5m,
-               COUNT(*) FILTER (WHERE event_type = 'assignment_submission' AND event_ts >= NOW() - INTERVAL 5 MINUTE) AS assignment_submissions_last_5m,
-               COUNT(*) FILTER (WHERE event_type = 'building_entry' AND event_ts >= NOW() - INTERVAL 5 MINUTE) AS building_entries_last_5m
+        SELECT COALESCE(COUNT(*) / GREATEST(DATE_DIFF('minute', MIN(event_ts), MAX(event_ts)), 1), 0) AS events_per_minute,
+               COALESCE(COUNT(DISTINCT student_id) FILTER (WHERE event_ts >= NOW() - INTERVAL 5 MINUTE), 0) AS active_students_last_5m,
+               COALESCE(COUNT(*) FILTER (WHERE event_type = 'assignment_submission' AND event_ts >= NOW() - INTERVAL 5 MINUTE), 0) AS assignment_submissions_last_5m,
+               COALESCE(COUNT(*) FILTER (WHERE event_type = 'building_entry' AND event_ts >= NOW() - INTERVAL 5 MINUTE), 0) AS building_entries_last_5m
         FROM streaming_events
         {where}
         """,

@@ -80,3 +80,18 @@ def test_lakehouse_lineage_can_be_built_without_error():
     lineage = build_lakehouse_lineage()
     assert not lineage.empty
     assert {"источник", "bronze table", "silver table", "gold table", "business purpose"}.issubset(lineage.columns)
+
+
+def test_conflicting_files_have_no_merge_markers():
+    conflict_files = [
+        "DEMO_SCENARIO.md",
+        "README.md",
+        "dashboard/app.py",
+        "src/data_quality.py",
+        "src/semantic_layer.py",
+        "tests/test_pipeline.py",
+    ]
+    for file_name in conflict_files:
+        content = open(file_name, encoding="utf-8").read()
+        markers = ["<" * 7, "=" * 7, ">" * 7]
+        assert all(marker not in content for marker in markers)

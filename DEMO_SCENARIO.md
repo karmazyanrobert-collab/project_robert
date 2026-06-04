@@ -126,3 +126,21 @@
 - **Delta Lake / Iceberg:** заменены Bronze/Silver/Gold parquet-слоями и DuckDB, чтобы сохранить автономность. В production эти слои можно перенести на S3 + Delta/Iceberg.
 - **Feast:** заменён таблицей `student_features`.
 - **Cube.js:** заменён `src/semantic_layer.py`.
+
+## Финальная проверка перед показом
+
+Перед защитой или перед повторным открытием PR можно сказать:
+
+> Мы проверили, что конфликтующие файлы приведены к единой русскоязычной версии, в них нет merge-маркеров, а dashboard остаётся автономным: он сам создаёт данные, warehouse и демонстрационные streaming events.
+
+Если зависимости доступны, выполните:
+
+```bash
+python -m pytest tests -v
+```
+
+Если зависимости недоступны в среде проверки, минимальная синтаксическая проверка:
+
+```bash
+python -m py_compile dashboard/app.py src/*.py tests/test_pipeline.py
+```

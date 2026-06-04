@@ -36,6 +36,18 @@ st.set_page_config(page_title="University Data Platform Demo", layout="wide")
 ALL = "All"
 ALL_RU = "Все"
 
+
+EVENT_TYPE_RU = {
+    "login": "вход в LMS",
+    "view_material": "просмотр материала",
+    "submit_assignment": "отправка задания",
+    "quiz_attempt": "попытка теста",
+    "forum_post": "сообщение на форуме",
+    "lms_click": "клик в LMS",
+    "assignment_submission": "отправка задания",
+    "building_entry": "вход в корпус",
+}
+
 COMPONENT_MAPPING = pd.DataFrame(
     [
         {"Компонент задания": "Object Storage / S3", "Реализация в демо": "локальная структура data/"},
@@ -78,6 +90,14 @@ def display_df(df: pd.DataFrame, limit: int = 100) -> pd.DataFrame:
     return df.head(limit).copy() if not df.empty else df
 
 
+def with_russian_event_types(df: pd.DataFrame, column: str = "event_type") -> pd.DataFrame:
+    if df.empty or column not in df.columns:
+        return df
+    result = df.copy()
+    result["тип события"] = result[column].map(EVENT_TYPE_RU).fillna(result[column])
+    return result
+
+
 def show_architecture_section() -> None:
     st.subheader("Архитектура платформы")
     st.code(
@@ -103,7 +123,7 @@ def prepare_dq_display(dq: pd.DataFrame) -> pd.DataFrame:
     if dq.empty:
         return dq
     result = dq.copy()
-    result["статус"] = result["status"].map(ru_status)
+    result["статус"] = result["status_ru"] if "status_ru" in result.columns else result["status"].map(ru_status)
     result = result.rename(
         columns={
             "check_name": "проверка",
@@ -279,7 +299,7 @@ with tabs[4]:
     s2.metric("Активные студенты за последние 5 минут", int(latest.get("active_students_last_5m") or 0))
     s3.metric("Отправленные задания за последние 5 минут", int(latest.get("assignment_submissions_last_5m") or 0))
     s4.metric("Входы в корпуса за последние 5 минут", int(latest.get("building_entries_last_5m") or 0))
-    events = streaming["events"]
+    events = with_russian_event_types(streaming["events"])
     metrics = streaming["metrics"]
     if not metrics.empty:
         st.line_chart(metrics.sort_values("metric_ts").set_index("metric_ts")[["events_per_minute"]])
@@ -315,8 +335,9 @@ with tabs[5]:
     c3, c4 = st.columns(2)
     with c3:
         if not lms.empty:
-            lms_event = lms.groupby("event_type", as_index=False)["events"].sum()
-            st.plotly_chart(px.pie(lms_event, names="event_type", values="events", title="Активность LMS"), use_container_width=True)
+            lms_localized = with_russian_event_types(lms)
+            lms_event = lms_localized.groupby("тип события", as_index=False)["events"].sum()
+            st.plotly_chart(px.pie(lms_event, names="тип события", values="events", title="Активность LMS"), use_container_width=True)
     with c4:
         if not students.empty:
             st.plotly_chart(px.histogram(students, x="engagement_score", nbins=20, title="Индекс вовлечённости", labels={"engagement_score": "Индекс вовлечённости"}), use_container_width=True)

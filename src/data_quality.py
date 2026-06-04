@@ -10,6 +10,7 @@ def _result(check_name: str, table_name: str, failed_rows: int, message: str, ex
         "check_name": check_name,
         "table_name": table_name,
         "status": "PASS" if failed_rows == 0 else "FAIL",
+        "status_ru": "Пройдено" if failed_rows == 0 else "Ошибка обнаружена",
         "failed_rows": int(failed_rows),
         "message": message,
         "explanation_ru": explanation_ru,
