@@ -144,3 +144,16 @@ python -m pytest tests -v
 ```bash
 python -m py_compile dashboard/app.py src/*.py tests/test_pipeline.py
 ```
+
+## Что делать, если GitHub показывает конфликтующие файлы
+
+Для защиты важно подчеркнуть: текущие версии `README.md`, `DEMO_SCENARIO.md`, `dashboard/app.py`, `src/data_quality.py`, `src/semantic_layer.py` и `tests/test_pipeline.py` не содержат merge-маркеров и являются финальной русскоязычной версией демо. Если GitHub всё ещё показывает конфликт, это конфликт между ветками PR и base branch, а не поломка кода dashboard.
+
+В такой ситуации при разрешении конфликта нужно выбрать текущую версию этих файлов из PR-ветки, потому что именно она содержит:
+
+- русскоязычный интерфейс;
+- вкладку Lakehouse;
+- понятное объяснение Data Quality FAIL;
+- автонаполнение streaming events;
+- Feature Store preview;
+- тест на отсутствие merge-маркеров.

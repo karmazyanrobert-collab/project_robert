@@ -8,14 +8,18 @@ from src.config import WAREHOUSE_PATH
 from src.warehouse import get_connection
 
 
+def _is_all_filter_value(value: Any) -> bool:
+    return value in (None, "", "All", "Все")
+
+
 def _where(filters: dict[str, Any] | None, alias: str = "") -> tuple[str, list[Any]]:
     filters = filters or {}
     p = f"{alias}." if alias else ""
     clauses, params = [], []
-    if filters.get("faculty") and filters["faculty"] != "All":
+    if not _is_all_filter_value(filters.get("faculty")):
         clauses.append(f"{p}faculty = ?")
         params.append(filters["faculty"])
-    if filters.get("group_name") and filters["group_name"] != "All":
+    if not _is_all_filter_value(filters.get("group_name")):
         clauses.append(f"{p}group_name = ?")
         params.append(filters["group_name"])
     return (" WHERE " + " AND ".join(clauses) if clauses else "", params)
@@ -70,7 +74,7 @@ def get_faculty_metrics() -> pd.DataFrame:
 
 
 def get_group_metrics(faculty: str | None = None) -> pd.DataFrame:
-    if faculty and faculty != "All":
+    if not _is_all_filter_value(faculty):
         return query_df("SELECT * FROM group_performance_gold WHERE faculty = ? ORDER BY avg_grade DESC", [faculty])
     return query_df("SELECT * FROM group_performance_gold ORDER BY faculty, avg_grade DESC")
 

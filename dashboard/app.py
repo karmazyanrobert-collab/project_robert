@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 from src.config import BRONZE_DIR, GOLD_DIR, SILVER_DIR, WAREHOUSE_PATH
 from src.lakehouse import build_lakehouse_inventory, build_lakehouse_lineage, build_quality_row_delta
 from src.pipeline import run_pipeline
+from src.data_quality import STATUS_LABELS_RU
 from src.semantic_layer import (
     get_data_quality_report,
     get_faculty_metrics,
@@ -75,7 +76,7 @@ def ensure_demo_streaming_events() -> None:
 
 
 def ru_status(value: str) -> str:
-    return {"PASS": "Пройдено", "FAIL": "Ошибка обнаружена"}.get(value, value)
+    return STATUS_LABELS_RU.get(value, value)
 
 
 def option_label(value: str) -> str:
@@ -356,6 +357,7 @@ with tabs[6]:
         "Эта вкладка — краткая шпаргалка для русскоязычной защиты проекта. "
         "Она показывает, в каком порядке демонстрировать возможности платформы."
     )
+    st.success("Файлы, которые ранее отображались как конфликтующие, сохранены в единой версии без merge-маркеров и проверяются тестом.")
     st.markdown(
         """
 1. Открыть dashboard.

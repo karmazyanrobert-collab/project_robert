@@ -57,6 +57,13 @@ def test_faculty_and_group_filters_change_row_counts():
     assert len(all_students) > len(faculty_students) > len(group_students) > 0
 
 
+def test_semantic_layer_accepts_russian_all_filter_value():
+    run_pipeline(regenerate=True)
+    english_all = get_student_details({"faculty": "All", "group_name": "All"})
+    russian_all = get_student_details({"faculty": "Все", "group_name": "Все"})
+    assert len(english_all) == len(russian_all) == 500
+
+
 def test_streaming_event_generation_creates_events():
     run_pipeline(regenerate=True)
     generated = generate_streaming_events(25)

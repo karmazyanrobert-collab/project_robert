@@ -4,13 +4,15 @@ import pandas as pd
 
 from src.config import VALID_LMS_EVENT_TYPES, VALID_ROOM_EVENT_TYPES
 
+STATUS_LABELS_RU = {"PASS": "Пройдено", "FAIL": "Ошибка обнаружена"}
+
 
 def _result(check_name: str, table_name: str, failed_rows: int, message: str, explanation_ru: str) -> dict[str, object]:
     return {
         "check_name": check_name,
         "table_name": table_name,
         "status": "PASS" if failed_rows == 0 else "FAIL",
-        "status_ru": "Пройдено" if failed_rows == 0 else "Ошибка обнаружена",
+        "status_ru": STATUS_LABELS_RU["PASS" if failed_rows == 0 else "FAIL"],
         "failed_rows": int(failed_rows),
         "message": message,
         "explanation_ru": explanation_ru,
